@@ -1,0 +1,546 @@
+/* Reset all margins and paddings to ensure proper sizing */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100vh; /* Use viewport height instead of percentage */
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+  position: relative; /* Ensure positioning context */
+}
+
+/* Cesium container must fill the entire viewport */
+#cesiumContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh; /* Use viewport height instead of percentage */
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  z-index: 0;
+}
+
+/* Ensure the Cesium canvas fills the container */
+.cesium-widget, 
+.cesium-widget canvas {
+  width: 100% !important;
+  height: 100% !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+}
+
+.panel {
+  position: absolute;
+  background-color: rgba(255,255,255,0.8);
+  border-radius: 5px;
+  padding: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  z-index: 1;
+}
+
+.left-panel {
+  top: 10px;
+  left: 10px;
+  width: 250px;
+}
+
+.right-panel {
+  top: 10px;
+  right: 10px;
+  width: 200px;
+}
+
+.bottom-panel {
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 800px;
+  padding: 15px;
+  text-align: center;
+}
+
+h2 {
+  margin-top: 0;
+  font-size: 16px;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 5px;
+}
+
+button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  margin: 5px 0;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 14px;
+  width: 100%;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+hr {
+  border: 0;
+  height: 1px;
+  background-color: #ccc;
+  margin: 10px 0;
+}
+
+.track-toggle {
+  display: flex;
+  align-items: center;
+  margin: 5px 0;
+  flex-wrap: wrap;
+}
+
+.color-box {
+  width: 15px;
+  height: 15px;
+  margin: 0 5px;
+  border: 1px solid #000;
+}
+
+.track-name {
+  flex-grow: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-right: 5px;
+}
+
+.track-visibility-toggle {
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+.elevation-control {
+  display: flex;
+  align-items: center;
+  margin-right: 5px;
+}
+
+.elevation-label {
+  font-size: 12px;
+  margin-right: 3px;
+}
+
+.elevation-input {
+  width: 50px;
+  font-size: 12px;
+  padding: 2px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+
+.remove-track {
+  color: red;
+  cursor: pointer;
+  font-weight: bold;
+  margin-left: 5px;
+}
+
+.controls {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.controls button {
+  width: auto;
+  margin: 0 5px;
+}
+
+.timeline {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.timeline-slider {
+  flex-grow: 1;
+  margin: 0 10px;
+}
+
+.legend-container {
+  display: flex;
+  height: 200px;
+  margin-top: 10px;
+  position: relative;
+}
+
+.legend-gradient {
+  width: 30px;
+  height: 100%;
+  margin-right: 15px;
+  border: 1px solid #ccc;
+}
+
+.legend-labels {
+  flex: 1;
+  position: relative;
+}
+
+.legend-label {
+  font-size: 12px;
+  cursor: pointer;
+  position: absolute;
+  white-space: nowrap;
+}
+
+.settings-group {
+  margin-bottom: 10px;
+}
+
+.settings-group label {
+  display: block;
+  margin: 5px 0;
+}
+
+.flag-container {
+  position: absolute;
+  bottom: 80px;
+  right: 20px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* [FIX] Ensure flags are clickable/draggable on top of the map */
+.flag-icon {
+  width: 70px;
+  height: 70px;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 10px;
+  cursor: move;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  background-color: transparent;
+  pointer-events: auto; /* [FIX ADDED] allow clicks/drags */
+  z-index: 9999;        /* [FIX ADDED] ensure flags are above other elements */
+}
+
+/* Start arch styling */
+.start-arch {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.start-arch:before {
+  content: "";
+  position: absolute;
+  top: 10px;
+  left: 5px;
+  width: 60px;
+  height: 35px;
+  border: 5px solid #0057B7;
+  border-bottom: none;
+  border-radius: 30px 30px 0 0;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.start-arch:after {
+  content: "";
+  position: absolute;
+  bottom: 10px;
+  left: 5px;
+  width: 60px;
+  height: 5px;
+  background-color: #333333;
+}
+
+.start-flag .start-arch {
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+  text-shadow: 0 0 3px black;
+  z-index: 1;
+}
+
+/* Finish arch styling */
+.finish-arch {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.finish-arch:before {
+  content: "";
+  position: absolute;
+  top: 10px;
+  left: 5px;
+  width: 60px;
+  height: 35px;
+  border: 5px solid transparent;
+  border-bottom: none;
+  border-radius: 30px 30px 0 0;
+  background-image: repeating-linear-gradient(
+    45deg,
+    black,
+    black 5px,
+    white 5px,
+    white 10px
+  );
+  background-clip: border-box;
+  -webkit-background-clip: border-box;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.finish-arch:after {
+  content: "";
+  position: absolute;
+  bottom: 10px;
+  left: 5px;
+  width: 60px;
+  height: 5px;
+  background-color: #333333;
+}
+
+.finish-arch .checkered-line {
+  position: absolute;
+  bottom: 15px;
+  left: 5px;
+  width: 60px;
+  height: 5px;
+  background-image: repeating-linear-gradient(
+    90deg,
+    black,
+    black 5px,
+    white 5px,
+    white 10px
+  );
+}
+
+/* New styles for the temporary dragging flag */
+.temp-flag {
+  position: absolute;
+  z-index: 1000;
+  pointer-events: none;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  transform: scale(0.7); /* Smaller size while dragging */
+}
+
+/* Ghost effect for deployed flags */
+.flag-deployed {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: scale(0.9);
+}
+
+/* Reset flags button styling */
+.reset-flags-button {
+  width: 80%;
+  margin-top: 5px;
+  background-color: #F44336;
+}
+
+.reset-flags-button:hover {
+  background-color: #d32f2f;
+}
+
+.speed-control {
+  display: flex;
+  align-items: center;
+  margin-top: 5px;
+}
+
+.speed-control input {
+  flex-grow: 1;
+  margin: 0 10px;
+}
+
+#fileInfo {
+  font-size: 12px;
+  color: #666;
+  margin-top: 5px;
+  min-height: 16px;
+}
+
+#progressBar {
+  width: 100%;
+  background-color: #ddd;
+  margin-top: 10px;
+  display: none;
+}
+
+#progressBarFill {
+  height: 20px;
+  background-color: #4CAF50;
+  width: 0%;
+  text-align: center;
+  line-height: 20px;
+  color: white;
+}
+
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 20px;
+  margin: 0 5px;
+  vertical-align: middle;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 20px;
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 14px;
+  width: 14px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .toggle-slider {
+  background-color: #2196F3;
+}
+
+input:checked + .toggle-slider:before {
+  transform: translateX(20px);
+}
+
+.unit-labels {
+  display: inline;
+  font-size: 12px;
+  margin-left: 5px;
+}
+
+.speed-label-container {
+  display: flex;
+  align-items: center;
+}
+
+/* Animation for flag movement */
+@keyframes flagPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+.flag-adjusting {
+  animation: flagPulse 0.5s ease-in-out 3;
+}
+
+/* Hide all Cesium watermarks and credits */
+.cesium-viewer-bottom,
+.cesium-viewer-timelineContainer,
+.cesium-viewer-animationContainer,
+.cesium-viewer-fullscreenContainer,
+.cesium-viewer-toolbar,
+.cesium-widget-credits,
+.cesium-credit-container,
+.cesium-credit-logoContainer,
+.cesium-credit-expand-link,
+.cesium-widget-errorPanel,
+.cesium-infoBox-container,
+.manus-branding {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  height: 0 !important;
+  width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Track segment hover popup styles */
+.track-popup {
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 4px;
+  padding: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  pointer-events: none;
+  font-size: 12px;
+  max-width: 250px;
+  display: none;
+  transition: opacity 0.2s ease;
+}
+
+.track-popup-title {
+  font-weight: bold;
+  margin-bottom: 5px;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 3px;
+}
+
+.track-popup-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.track-popup-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.track-popup-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  margin-right: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.track-popup-name {
+  flex-grow: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
+}
+
+.track-popup-value {
+  font-weight: bold;
+  margin-left: 8px;
+}
