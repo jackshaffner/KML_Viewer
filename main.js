@@ -689,8 +689,8 @@ function calculateMinMaxValues() {
     }
   } else if (colorMode === 'lostTime') {
     if (!settings.hasOwnProperty('userSetLegendMin') && !settings.hasOwnProperty('userSetLegendMax')) {
-      settings.legendMin = -1;
-      settings.legendMax = 1;
+      settings.legendMin = -3;
+      settings.legendMax = 3;
     }
   }
 }
