@@ -1199,11 +1199,14 @@ function resetFlags() {
     updateTimelineSliderPosition();
   }
   
-  // Clear isResetting flag after a short delay
+  // Clear isResetting and justReset flags immediately to allow redeployment
+  flagsState.isResetting = false;
+  flagsState.justReset = false;
+  
+  // Force update menu icons to fix visual glitch
   setTimeout(() => {
-    flagsState.isResetting = false;
-    flagsState.justReset = false;
-  }, 500);
+    updateMenuIcons();
+  }, 50);
 }
 
 /**
@@ -1879,5 +1882,88 @@ function initFlagDragDrop() {
  * This is the main entry point for resetting flags
  */
 function resetAllFlags() {
-  resetFlags();
+  // Set the isResetting flag to prevent race conditions
+  flagsState.isResetting = true;
+  
+  // Remove flag entities from viewer
+  if (flagsState.startFlag) {
+    viewerRef.entities.remove(flagsState.startFlag);
+    flagsState.startFlag = null;
+  }
+  
+  if (flagsState.finishFlag) {
+    viewerRef.entities.remove(flagsState.finishFlag);
+    flagsState.finishFlag = null;
+  }
+  
+  // Reset flag state
+  flagsState.startTrackIndex = -1;
+  flagsState.startPointIndex = -1;
+  flagsState.finishTrackIndex = -1;
+  flagsState.finishPointIndex = -1;
+  flagsState.draggingStart = false;
+  flagsState.draggingFinish = false;
+  flagsState.movingPlacedFlag = false;
+  flagsState.currentMovingFlag = null;
+  flagsState.flagAdjustmentInProgress = false;
+  flagsState.initialFlagPosition = null;
+  flagsState.isDragging = false;
+  flagsState.draggedFlagElement = null;
+  flagsState.draggedFlagType = null;
+  flagsState.startFlagDeployed = false;
+  flagsState.finishFlagDeployed = false;
+  flagsState.preventMapMovement = false;
+  flagsState.flagHitBoxes = [];
+  flagsState.hoveringOverFlag = false;
+  flagsState.flagPickedUp = false;
+  flagsState.pickedUpFlagType = null;
+  flagsState.justReset = false;  // Set to false immediately to allow redeployment
+  
+  // Hide ghost flag
+  hideGhostFlag();
+  
+  // Update UI elements
+  const startIcon = document.getElementById('startPointIcon');
+  const finishIcon = document.getElementById('finishPointIcon');
+  
+  if (startIcon) {
+    startIcon.classList.remove('flag-deployed');
+    startIcon.classList.remove('flag-adjusting');
+    startIcon.style.pointerEvents = 'auto';
+    startIcon.draggable = true;
+  }
+  if (finishIcon) {
+    finishIcon.classList.remove('flag-deployed');
+    finishIcon.classList.remove('flag-adjusting');
+    finishIcon.style.pointerEvents = 'auto';
+    finishIcon.draggable = true;
+  }
+
+  // Update menu icons
+  updateMenuIcons();
+  
+  if (fileInfoRef) fileInfoRef.textContent = "Flags reset";
+
+  // Restore camera controls
+  restoreCameraControls();
+  
+  // Reset animation state when flags are reset
+  if (animationState.playing) {
+    stopAnimation();
+  }
+  
+  // Reset animation time to start time
+  if (animationState.startTime) {
+    animationState.currentTime = new Date(animationState.startTime.getTime());
+    updateAnimationMarkers();
+    updateTimelineSliderPosition();
+  }
+  
+  // Clear isResetting flag immediately to allow redeployment
+  flagsState.isResetting = false;
+  
+  // Force update menu icons to fix visual glitch
+  setTimeout(() => {
+    updateMenuIcons();
+  }, 50);
 }

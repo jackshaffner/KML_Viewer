@@ -42,17 +42,19 @@ const colorScales = {
     { value: 1.0, color: Cesium.Color.RED },
   ],
   lostTime: [
-    { value: 0.0, color: Cesium.Color.fromCssColorString('#00AA00') }, // Gains
+    { value: 0.0, color: Cesium.Color.fromCssColorString('#00AA00') }, // Gains (darkest green)
     { value: 0.1, color: Cesium.Color.fromCssColorString('#22CC22') },
     { value: 0.2, color: Cesium.Color.fromCssColorString('#44DD44') },
-    { value: 0.3, color: Cesium.Color.fromCssColorString('#88EEAA') },
-    { value: 0.4, color: Cesium.Color.fromCssColorString('#CCFFCC') },
+    { value: 0.3, color: Cesium.Color.fromCssColorString('#66EE66') }, 
+    { value: 0.4, color: Cesium.Color.fromCssColorString('#00CCFF') }, // Blue intermediate color
+    { value: 0.45, color: Cesium.Color.fromCssColorString('#99DDFF') }, // Light blue closer to white
     { value: 0.5, color: Cesium.Color.WHITE }, // Neutral
-    { value: 0.6, color: Cesium.Color.fromCssColorString('#FFDDDD') },
+    { value: 0.55, color: Cesium.Color.fromCssColorString('#FFDD99') }, // Light orange closer to white
+    { value: 0.6, color: Cesium.Color.fromCssColorString('#FFAA00') }, // Orange intermediate color
     { value: 0.7, color: Cesium.Color.fromCssColorString('#FFBBBB') },
     { value: 0.8, color: Cesium.Color.fromCssColorString('#FF8888') },
     { value: 0.9, color: Cesium.Color.fromCssColorString('#FF4444') },
-    { value: 1.0, color: Cesium.Color.fromCssColorString('#CC0000') }, // Loses
+    { value: 1.0, color: Cesium.Color.fromCssColorString('#CC0000') }, // Loses (darkest red)
   ],
 };
 

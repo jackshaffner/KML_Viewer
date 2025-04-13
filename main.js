@@ -273,12 +273,14 @@ function showTrackPopupAtPosition(screenPosition, cartesian) {
             value = Math.abs((trackTime - refTime) / 1000);
           }
         } else if (settings.colorMode === 'lostTime') {
-          if (kd.syncedTimestamps && kd.syncedTimestamps.length > closestPointIndex &&
-              refTrack.syncedTimestamps && refTrack.syncedTimestamps.length > closestPointIndex) {
-            const trackTime = kd.syncedTimestamps[closestPointIndex].time.getTime();
-            const refTime = refTrack.syncedTimestamps[closestPointIndex].time.getTime();
-            value = (trackTime - refTime) / 1000;
-          }
+          if (track.lostTimeDerivatives && j < track.lostTimeDerivatives.length) {
+			value = track.lostTimeDerivatives[j];
+		  } else {
+			// Fallback to absolute difference if derivatives not available
+			const trackTime = pt.time.getTime();
+			const refTime = refTrack.syncedTimestamps[closestIdx].time.getTime();
+			value = (trackTime - refTime) / 1000;
+		  }
         }
       }
       
@@ -687,8 +689,8 @@ function calculateMinMaxValues() {
     }
   } else if (colorMode === 'lostTime') {
     if (!settings.hasOwnProperty('userSetLegendMin') && !settings.hasOwnProperty('userSetLegendMax')) {
-      settings.legendMin = -5;
-      settings.legendMax = 5;
+      settings.legendMin = -1;
+      settings.legendMax = 1;
     }
   }
 }
@@ -968,7 +970,7 @@ function createLostTimeSegments(kmlDataList) {
       continue;
     }
     
-    const lostTimes = [];
+    const absoluteLostTimes = [];
     
     for (let j = 0; j < track.syncedTimestamps.length; j++) {
       const pt = track.syncedTimestamps[j];
@@ -993,17 +995,35 @@ function createLostTimeSegments(kmlDataList) {
         const trackTime = pt.time.getTime();
         const refTime = refTrack.syncedTimestamps[closestIdx].time.getTime();
         const lostTime = (trackTime - refTime) / 1000;
-        lostTimes.push(lostTime);
+        absoluteLostTimes.push(lostTime);
       } else {
-        lostTimes.push(0);
+        absoluteLostTimes.push(0);
       }
     }
+ 
+    // Now calculate the derivative (change in lost time between steps)
+    const lostTimeDerivatives = [];
     
+    // For the first point, we don't have a previous value, so use 0 (no change)
+    lostTimeDerivatives.push(0);
+    
+    // Calculate derivatives for the rest of the points
+    for (let j = 1; j < absoluteLostTimes.length; j++) {
+      const currentLostTime = absoluteLostTimes[j];
+      const previousLostTime = absoluteLostTimes[j-1];
+      
+      // Calculate the change in lost time from previous to current point
+      const derivative = currentLostTime - previousLostTime;
+      lostTimeDerivatives.push(derivative);
+    }
+	
+	track.lostTimeDerivatives = lostTimeDerivatives;
+
     const range = {
       min: settings.legendMin,
       max: settings.legendMax
     };
-    createColoredSegments(track, lostTimes, range, colorScales.lostTime, settings.continuousColors);
+    createColoredSegments(track, lostTimeDerivatives, range, colorScales.lostTime, settings.continuousColors);
   }
   
   const positions = refTrack.coordinates.map(c => 
